@@ -65,6 +65,5 @@ public class InLabByHandTranslator implements Translator {
             result = "加拿大";
         }
         return result;
-
     }
 }
