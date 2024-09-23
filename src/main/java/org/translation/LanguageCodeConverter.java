@@ -4,15 +4,17 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides the service of converting language codes to their names.
  */
 public class LanguageCodeConverter {
 
-    private List<String> countryCode;
+    // TODO Task: pick appropriate instance variables to store the data necessary for this class
+    private final HashMap<String, String> codeToCountry;
 
     /**
      * Default constructor which will load the language codes from "language-codes.txt"
@@ -28,21 +30,21 @@ public class LanguageCodeConverter {
      * @throws RuntimeException if the resource file can't be loaded properly
      */
     public LanguageCodeConverter(String filename) {
-        countryCode = new ArrayList<>();
+        codeToCountry = new HashMap<>();
         try {
             List<String> lines = Files.readAllLines(Paths.get(getClass()
                     .getClassLoader().getResource(filename).toURI()));
 
-            for (String line : lines) {
-                String[] tokens = line.split("\t");
-                countryCode.add(tokens[0]);
-
-                countryCode.add(tokens[1]);
+            for (int i = 1; i < lines.size(); i++) {
+                String[] values = lines.get(i).split("\t");
+                codeToCountry.put(values[1], values[0]);
             }
+
         }
         catch (IOException | URISyntaxException ex) {
             throw new RuntimeException(ex);
         }
+
     }
 
     /**
@@ -51,11 +53,10 @@ public class LanguageCodeConverter {
      * @return the name of the language corresponding to the code
      */
     public String fromLanguageCode(String code) {
-        int i = countryCode.indexOf(code);
-        if (i == -1) {
-            return "";
+        if (codeToCountry.containsKey(code)) {
+            return codeToCountry.get(code);
         }
-        return countryCode.get(i - 1);
+        return "";
     }
 
     /**
@@ -64,11 +65,12 @@ public class LanguageCodeConverter {
      * @return the 2-letter code of the language
      */
     public String fromLanguage(String language) {
-        int i = countryCode.indexOf(language);
-        if (i == -1) {
-            return "";
+        for (String key: codeToCountry.keySet()) {
+            if (key.contains(language)) {
+                return codeToCountry.get(key);
+            }
         }
-        return countryCode.get(i + 1);
+        return "";
     }
 
     /**
@@ -76,6 +78,6 @@ public class LanguageCodeConverter {
      * @return how many languages are included in this code converter.
      */
     public int getNumLanguages() {
-        return countryCode.size() / 2;
+        return codeToCountry.size();
     }
 }
