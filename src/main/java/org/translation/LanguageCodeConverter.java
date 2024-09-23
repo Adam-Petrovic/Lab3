@@ -53,7 +53,7 @@ public class LanguageCodeConverter {
     public String fromLanguageCode(String code) {
         int i = countryCode.indexOf(code);
         if (i == -1) {
-            return " ";
+            return "";
         }
         return countryCode.get(i - 1);
     }
@@ -66,7 +66,7 @@ public class LanguageCodeConverter {
     public String fromLanguage(String language) {
         int i = countryCode.indexOf(language);
         if (i == -1) {
-            return " ";
+            return "";
         }
         return countryCode.get(i + 1);
     }
